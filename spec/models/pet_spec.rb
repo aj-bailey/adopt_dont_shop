@@ -37,6 +37,16 @@ RSpec.describe Pet, type: :model do
         expect(Pet.search_by_name('mr.')).to eq([@pet_1])
       end
     end
+
+    describe '::make_unadoptable' do 
+      it 'changes all pets adoptable status to false' do 
+        Pet.make_unadoptable
+        
+        expect(Pet.find(@pet_1.id).adoptable).to eq(false)
+        expect(Pet.find(@pet_2.id).adoptable).to eq(false)
+        expect(Pet.find(@pet_3.id).adoptable).to eq(false)
+      end
+    end
   end
 
   describe 'instance methods' do
