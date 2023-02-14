@@ -18,6 +18,7 @@ class PetApplicationsController < ApplicationController
     
     if application.pets_approved?
       application.update(status: 2)
+      application.pets.make_unadoptable
     elsif application.no_pets_in_progress?
       application.update(status: 3)
     end
