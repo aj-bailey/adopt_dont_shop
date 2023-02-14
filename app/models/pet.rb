@@ -16,4 +16,8 @@ class Pet < ApplicationRecord
   def self.search_by_name(name)
     self.where('name ILIKE ?', "%#{name}%")
   end
+
+  def self.make_unadoptable
+    self.all.each { |pet| pet.update(adoptable: false) }
+  end
 end
