@@ -18,6 +18,8 @@ class PetApplicationsController < ApplicationController
     
     if application.pets_approved?
       application.update(status: 2)
+    elsif application.no_pets_in_progress?
+      application.update(status: 3)
     end
 
     redirect_to "/admin/applications/#{params[:application_id]}"

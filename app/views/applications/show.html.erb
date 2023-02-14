@@ -53,4 +53,6 @@
     <p> <div class="application_status_pending">Application Status: <%= @application.status %></div></p>
 <% elsif @application.status == "Accepted" %>
     <p> <div class="application_status_accepted">Application Status: <%= @application.status %></div></p>
+<% elsif @application.status == "Rejected" %>
+    <p> <div class="application_status_rejected">Application Status: <%= @application.status %></div></p>
 <% end %>

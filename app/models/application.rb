@@ -14,4 +14,8 @@ class Application < ApplicationRecord
   def pets_approved?
     self.pet_applications.where.not(status: "Approved").count == 0
   end
+
+  def no_pets_in_progress?
+    self.pet_applications.where(status: "In Progress").count == 0
+  end
 end
