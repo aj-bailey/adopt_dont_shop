@@ -1,4 +1,12 @@
 <h1><%= "Application: #{@application.id}" %></h1>
+<% if @application.status == "In Progress" %>
+  <p> <div class="application_status_in_progress">Application Status: <%= @application.status %></div></p>
+<% elsif @application.status == "Pending" %>
+  <p> <div class="application_status_pending">Application Status: <%= @application.status %></div></p>
+<% elsif @application.status == "Accepted" %>
+  <p> <div class="application_status_accepted">Application Status: <%= @application.status %></div></p>
+<% end %>
+
 
 <% @pets.each do |pet| %>
   <div class="pet" id="pet-<% pet.id %>">
@@ -10,7 +18,7 @@
     <%= "Status: #{pet.pet_applications.status(@application.id)}" %><br><br>
     <% if pet.pet_applications.status(@application.id) == "In Progress" %>
       <%= button_to "Approve", "/applications/#{@application.id}/pets/#{pet.id}", method: :patch, params:{status: 1} %><br>
-       <%= button_to "Reject", "/applications/#{@application.id}/pets/#{pet.id}", method: :patch, params:{status: 2} %>
+      <%= button_to "Reject", "/applications/#{@application.id}/pets/#{pet.id}", method: :patch, params:{status: 2} %>
     <% end %>
     <br>
   </div>
