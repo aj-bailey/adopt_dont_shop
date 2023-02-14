@@ -62,7 +62,7 @@ RSpec.describe "Admin Application Show Page" do
         }
       end
 
-      context "When there are two applications in they system for the same pet" do 
+      context "When there are multiple applications in they system for the same pet" do 
         it 'when I approve or reject a pet on one application, the other application is not affected' do 
           click_on "Approve"
 
@@ -76,6 +76,19 @@ RSpec.describe "Admin Application Show Page" do
             expect(page).to have_content("Status: In Progress")
           }
         end
+      end
+
+      it 'can see an application status approved when all pets for an application are approved' do
+        jax = Pet.create!(adoptable: true, age: 1, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        @application_1.pet_applications.create!(pet: jax, status: 1)
+        
+        visit "/admin/applications/#{@application_1.id}"
+        
+        click_on "Approve"
+
+        expect(current_path).to eq("/admin/applications/#{@application_1.id}")
+
+        expect(page).to have_content("Application Status: Accepted")
       end
     end
   end 
