@@ -90,6 +90,19 @@ RSpec.describe "Admin Application Show Page" do
 
         expect(page).to have_content("Application Status: Accepted")
       end
+
+      it 'can see an application status rejected when all pets for an application are confirmed with at least one rejection' do
+        jax = Pet.create!(adoptable: true, age: 1, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        @application_1.pet_applications.create!(pet: jax, status: 2)
+        
+        visit "/admin/applications/#{@application_1.id}"
+        
+        click_on "Approve"
+    
+        expect(current_path).to eq("/admin/applications/#{@application_1.id}")
+
+        expect(page).to have_content("Application Status: Rejected")
+      end
     end
   end 
 end 
