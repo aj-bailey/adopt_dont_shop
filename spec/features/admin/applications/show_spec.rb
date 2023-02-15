@@ -62,8 +62,11 @@ RSpec.describe "Admin Application Show Page" do
         }
       end
 
-      context "When there are two applications in they system for the same pet" do 
-        it 'when I approve or reject a pet on one application, the other application is not affected' do 
+      context "When there are multiple applications in they system for the same pet" do 
+        it 'when I approve or reject a pet on one application, the other application is not affected' do
+          barkly = @application_1.pets.create!(adoptable: true, age: 1, breed: "Lab", name: "Rylo", shelter: @shelter_1)
+          @application_1.pet_applications.create!(pet: barkly)
+
           click_on "Approve"
 
           expect(current_path).to eq("/admin/applications/#{@application_1.id}")
@@ -76,6 +79,59 @@ RSpec.describe "Admin Application Show Page" do
             expect(page).to have_content("Status: In Progress")
           }
         end
+      end
+
+      it 'can see an application status approved when all pets for an application are approved' do
+        jax = Pet.create!(adoptable: true, age: 1, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        @application_1.pet_applications.create!(pet: jax, status: 1)
+        
+        visit "/admin/applications/#{@application_1.id}"
+        
+        click_on "Approve"
+
+        expect(current_path).to eq("/admin/applications/#{@application_1.id}")
+
+        expect(page).to have_content("Application Status: Accepted")
+      end
+
+      it 'can see an application status rejected when all pets for an application are confirmed with at least one rejection' do
+        jax = Pet.create!(adoptable: true, age: 1, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        @application_1.pet_applications.create!(pet: jax, status: 2)
+        
+        visit "/admin/applications/#{@application_1.id}"
+        
+        click_on "Approve"
+    
+        expect(current_path).to eq("/admin/applications/#{@application_1.id}")
+
+        expect(page).to have_content("Application Status: Rejected")
+      end
+
+      it 'when an application is approved, all associated pets are no longer adoptable' do
+        jax = Pet.create!(adoptable: true, age: 1, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        @application_1.pet_applications.create!(pet: jax, status: 1)
+
+        visit "/admin/applications/#{@application_1.id}"
+
+        click_on "Approve"
+
+        visit "/pets/#{jax.id}"
+        
+        expect(page).to have_content("Adoptable: false")
+
+        visit "/pets/#{@rylo.id}"
+
+        expect(page).to have_content("Adoptable: false")
+      end
+
+      it 'will not show an approve button on a pet if it has an accepted application already' do
+        visit "/admin/applications/#{@application_1.id}"
+
+        click_on "Approve"
+
+        visit "/admin/applications/#{@application_2.id}"
+
+        expect(page).to_not have_button("Approve")
       end
     end
   end 

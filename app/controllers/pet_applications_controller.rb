@@ -14,6 +14,15 @@ class PetApplicationsController < ApplicationController
     
     pet_application.update(status: params[:status].to_i)
     
+    application = Application.find(params[:application_id])
+    
+    if application.pets_approved?
+      application.update(status: 2)
+      application.pets.make_unadoptable
+    elsif application.no_pets_in_progress?
+      application.update(status: 3)
+    end
+
     redirect_to "/admin/applications/#{params[:application_id]}"
   end
 
