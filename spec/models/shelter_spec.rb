@@ -56,6 +56,13 @@ RSpec.describe Shelter, type: :model do
         expect(Shelter.pending_applications).to eq([@shelter_1])
       end
     end
+
+    describe '::name_and_address' do 
+      it 'returns only the name and address of a shelter' do 
+
+        expect(Shelter.name_and_address(@shelter_1.id)).to eq({name: @shelter_1.name, city: @shelter_1.city})
+      end
+    end
   end
 
   describe 'instance methods' do
