@@ -19,8 +19,16 @@
     <%= "Adoptable: #{pet.adoptable}" %><br>
     <%= "Shelter: #{pet.shelter.name}" %><br>
     <%= "Status: #{pet.pet_applications.status(@application.id)}" %><br><br>
+
     <% if pet.pet_applications.status(@application.id) == "In Progress" %>
-      <%= button_to "Approve", "/applications/#{@application.id}/pets/#{pet.id}", method: :patch, params:{status: 1} %><br>
+
+      <% if pet.has_approved_application? %>
+        <b><%= "This pet has already been adopted" %></b>
+        <br><br>
+      <% else %>
+        <%= button_to "Approve", "/applications/#{@application.id}/pets/#{pet.id}", method: :patch, params:{status: 1} %><br>
+      <% end %>
+
       <%= button_to "Reject", "/applications/#{@application.id}/pets/#{pet.id}", method: :patch, params:{status: 2} %>
     <% end %>
     <br>
