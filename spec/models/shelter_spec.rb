@@ -101,5 +101,19 @@ RSpec.describe Shelter, type: :model do
         expect(@shelter_2.average_pet_age).to eq("No Pets")
       end
     end
+
+    describe '.adopted_pets_count' do
+      it 'returns the count of pets with approved applications' do
+        application = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 2)
+        application.pet_applications.create!(pet: @pet_1, status: 1)
+        application.pet_applications.create!(pet: @pet_2, status: 1)
+
+        expect(@shelter_1.adopted_pets_count).to eq(2)
+      end
+
+      it 'returns no pets if the shelter has no pets' do 
+        expect(@shelter_2.adopted_pets_count).to eq(0)
+      end
+    end
   end
 end
