@@ -20,4 +20,8 @@ class Pet < ApplicationRecord
   def self.make_unadoptable
     self.all.each { |pet| pet.update(adoptable: false) }
   end
+
+  def has_approved_application?
+    self.applications.where(status: 2).count > 0
+  end
 end
