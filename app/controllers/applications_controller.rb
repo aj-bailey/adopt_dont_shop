@@ -22,7 +22,6 @@ class ApplicationsController < ApplicationController
   def update
     application = Application.find(params[:id])
     application.update(description: params[:description], status: 1)
-    # if application.pets_confirmed?
   
     redirect_to "/applications/#{params[:id]}"
   end
