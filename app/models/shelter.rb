@@ -40,4 +40,8 @@ class Shelter < ApplicationRecord
     self.joins(pets: :applications).where(applications: {status: 1}).distinct
   end
   
+  def self.name_and_address(id)
+    shelter = self.find_by_sql("SELECT name, city FROM shelters WHERE id = #{id}").first
+    {name: shelter.name, city: shelter.city}
+  end
 end
