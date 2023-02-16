@@ -35,21 +35,30 @@ RSpec.describe 'Admin Shelters Show page' do
         }
       end
 
-      it 'will display all pets that are in progress in a section called action required' do 
-        application = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
-        application.pet_applications.create!(pet: @pet_1, status: 0)
-        application.pet_applications.create!(pet: @pet_2, status: 0)
-        # application_2 = Application.create!(name: "Adam", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
-        # application_2.pet_applications.create!(pet: @pet_1, status: 0)
+      context 'Action Required' do
+        before(:each) do
+          @application = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
+          @application.pet_applications.create!(pet: @pet_1, status: 0)
+          @application.pet_applications.create!(pet: @pet_2, status: 0)
 
-        visit "/admin/shelters/#{@shelter_1.id}"
+          visit "/admin/shelters/#{@shelter_1.id}"
+        end
 
-        within(".action_required") {
-          expect(page).to have_content("Action Required")
-          expect(page).to have_content("Mr. Pirate")
-          expect(page).to have_content("Clawdia")
-          # expect(page).to have_content("Mr. Pirate Application ID: #{application_2.id}")
-        }
+        it 'will display all pets that are in progress in a section called action required' do 
+          within(".action_required") {
+            expect(page).to have_content("Action Required")
+            expect(page).to have_content("Mr. Pirate")
+            expect(page).to have_content("Clawdia")
+          }
+        end
+
+        it 'will display a link to the corresponding application for each pet in the action required section' do
+          save_and_open_page
+          within(".action_required") {
+            expect(page).to have_link("Application ID: #{@application.id}", href: "/admin/applications/#{@application.id}")
+            expect(page).to have_link("Application ID: #{@application.id}", href: "/admin/applications/#{@application.id}" )
+          }
+        end
       end
     end
   end
