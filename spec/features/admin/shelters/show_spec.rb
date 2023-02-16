@@ -30,7 +30,25 @@ RSpec.describe 'Admin Shelters Show page' do
         visit "/admin/shelters/#{@shelter_1.id}"
 
         within(".statistics") {
+          expect(page).to have_content("Statistics")
           expect(page).to have_content("Count of Adopted Pets: 2")
+        }
+      end
+
+      it 'will display all pets that are in progress in a section called action required' do 
+        application = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
+        application.pet_applications.create!(pet: @pet_1, status: 0)
+        application.pet_applications.create!(pet: @pet_2, status: 0)
+        # application_2 = Application.create!(name: "Adam", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
+        # application_2.pet_applications.create!(pet: @pet_1, status: 0)
+
+        visit "/admin/shelters/#{@shelter_1.id}"
+
+        within(".action_required") {
+          expect(page).to have_content("Action Required")
+          expect(page).to have_content("Mr. Pirate")
+          expect(page).to have_content("Clawdia")
+          # expect(page).to have_content("Mr. Pirate Application ID: #{application_2.id}")
         }
       end
     end
