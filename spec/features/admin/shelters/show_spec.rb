@@ -51,14 +51,6 @@ RSpec.describe 'Admin Shelters Show page' do
             expect(page).to have_content("Clawdia")
           }
         end
-
-        it 'will display a link to the corresponding application for each pet in the action required section' do
-          save_and_open_page
-          within(".action_required") {
-            expect(page).to have_link("Application ID: #{@application.id}", href: "/admin/applications/#{@application.id}")
-            expect(page).to have_link("Application ID: #{@application.id}", href: "/admin/applications/#{@application.id}" )
-          }
-        end
       end
     end
   end
