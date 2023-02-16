@@ -20,17 +20,28 @@ RSpec.describe "Admin Shelters Index Page" do
         application_1 = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
         application_2 = Application.create!(name: "Adam", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals more than my roomate", status: 1)
         application_3 = Application.create!(name: "John", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 3)
-        jax = application_1.pets.create!(adoptable: false, age: 4, breed: "ACD", name: "Jax", shelter: @shelter_1)
-        rylo = application_2.pets.create!(adoptable: false, age: 1, breed: "Lab", name: "Rylo", shelter: @shelter_3)
+        jax = application_1.pets.create!(adoptable: false, age: 4, breed: "ACD", name: "Jax", shelter: @shelter_3)
+        rylo = application_2.pets.create!(adoptable: false, age: 1, breed: "Lab", name: "Rylo", shelter: @shelter_1)
         frankie = application_3.pets.create!(adoptable: false, age: 1, breed: "Shih Tzu", name: "Frankie", shelter: @shelter_2)
        
         visit '/admin/shelters'
 
         within(".pending_applications") {
           expect(page).to have_content("Shelters with Pending Applications")
-          expect(page).to have_content("Aurora shelter")
-          expect(page).to have_content("Fancy pets of Colorado")
+          expect("Aurora shelter").to appear_before("Fancy pets of Colorado")
         }
+      end
+      
+      it "can see a link for each shelter's name to it's show page" do
+        visit '/admin/shelters'
+
+        expect(page).to have_link('RGV animal shelter')
+        expect(page).to have_link('Fancy pets of Colorado')
+        expect(page).to have_link('Aurora shelter')
+
+        click_link "RGV animal shelter"
+
+        expect(current_path).to eq("/admin/shelters/#{@shelter_2.id}")
       end
     end
   end

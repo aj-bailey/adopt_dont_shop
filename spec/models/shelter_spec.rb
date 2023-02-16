@@ -49,11 +49,20 @@ RSpec.describe Shelter, type: :model do
     end
 
     describe '::pending_applications' do 
-      it 'returns shelters with pending applications' do 
+      it 'returns shelters with pending applications ordered by ascending name' do 
         application_1 = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
-        jax = application_1.pets.create!(adoptable: false, age: 4, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        application_2 = Application.create!(name: "Adam", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
+        jax = application_1.pets.create!(adoptable: false, age: 4, breed: "ACD", name: "Jax", shelter: @shelter_2)
+        pet_4 = application_2.pets.create!(name: 'Ann', breed: 'ragdoll', age: 3, adoptable: false, shelter: @shelter_3)
 
-        expect(Shelter.pending_applications).to eq([@shelter_1])
+        expect(Shelter.pending_applications).to eq([@shelter_3, @shelter_2])
+      end
+    end
+
+    describe '::name_and_address' do 
+      it 'returns only the name and address of a shelter' do 
+
+        expect(Shelter.name_and_address(@shelter_1.id)).to eq({name: @shelter_1.name, city: @shelter_1.city})
       end
     end
   end
@@ -80,6 +89,41 @@ RSpec.describe Shelter, type: :model do
     describe '.pet_count' do
       it 'returns the number of pets at the given shelter' do
         expect(@shelter_1.pet_count).to eq(3)
+      end
+    end
+
+    describe '.average_pet_age' do 
+      it 'returns the average age for pets' do 
+        expect(@shelter_1.average_pet_age).to eq(4.3)
+      end
+
+      it 'returns no pets if the shelter has no pets' do 
+        expect(@shelter_2.average_pet_age).to eq("No Pets")
+      end
+    end
+
+    describe '.adopted_pets_count' do
+      it 'returns the count of pets with approved applications' do
+        application = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 2)
+        application.pet_applications.create!(pet: @pet_1, status: 1)
+        application.pet_applications.create!(pet: @pet_2, status: 1)
+
+        expect(@shelter_1.adopted_pets_count).to eq(2)
+      end
+
+      it 'returns no pets if the shelter has no pets' do 
+        expect(@shelter_2.adopted_pets_count).to eq(0)
+      end
+    end
+
+    describe '.pending_pet_applications' do 
+      it 'will return all pending pet applications for a given shelter' do
+        application_1 = Application.create!(name: "Brian", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
+        application_2 = Application.create!(name: "Adam", street_address: "853 West Linden st", city: "Louisville", state: "colorado", zip_code: "80027", description: "I like animals", status: 1)
+        jax = application_1.pets.create!(adoptable: false, age: 4, breed: "ACD", name: "Jax", shelter: @shelter_1)
+        pet_4 = application_2.pets.create!(name: 'Ann', breed: 'ragdoll', age: 3, adoptable: false, shelter: @shelter_1)
+        
+        expect(@shelter_1.pending_pet_applications).to eq([jax, pet_4])
       end
     end
   end

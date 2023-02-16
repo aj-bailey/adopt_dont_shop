@@ -28,6 +28,20 @@ class Shelter < ApplicationRecord
     adoptable_pets.order(name: :asc)
   end
 
+  def average_pet_age
+    average_age = self.pets.average(:age)
+    return "No Pets" unless average_age 
+    average_age.round(1)
+  end
+
+  def adopted_pets_count
+    self.pets.joins(:applications).where(applications: {status: 2}).count
+  end
+
+  def pending_pet_applications
+    self.pets.joins(:applications).where(pet_applications: {status: 0})
+  end
+
   def shelter_pets_filtered_by_age(age_filter)
     adoptable_pets.where('age >= ?', age_filter)
   end
@@ -37,7 +51,11 @@ class Shelter < ApplicationRecord
   end
 
   def self.pending_applications
-    self.joins(pets: :applications).where(applications: {status: 1}).distinct
+    self.joins(pets: :applications).where(applications: {status: 1}).order(name: :asc).distinct
   end
   
+  def self.name_and_address(id)
+    shelter = self.find_by_sql("SELECT name, city FROM shelters WHERE id = #{id}").first
+    {name: shelter.name, city: shelter.city}
+  end
 end

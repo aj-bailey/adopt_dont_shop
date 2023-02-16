@@ -1,0 +1,13 @@
+<h1><%= @shelter_name_and_address[:name] %></h1>
+<h3><%=  @shelter_name_and_address[:city] %></h3>
+<div class='statistics'>
+  <h3>Statistics</h3>
+  <h4>Average Pet Age: <%= @shelter.average_pet_age %></h4>
+  <h4>Count of Adopted Pets: <%= @shelter.adopted_pets_count %><h4>
+</div>
+<div class='action_required'>
+  <h3>Action Required</h3>
+  <% @pets_pending.each do |pet| %>
+    <%= "#{pet.name} "%><br>
+  <% end %>
+</div>
