@@ -38,6 +38,10 @@ class Shelter < ApplicationRecord
     self.pets.joins(:applications).where(applications: {status: 2}).count
   end
 
+  def pending_pet_applications
+    self.pets.joins(:pet_applications).where(pet_applications: {status: 0})
+  end
+
   def shelter_pets_filtered_by_age(age_filter)
     adoptable_pets.where('age >= ?', age_filter)
   end
